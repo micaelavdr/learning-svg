@@ -1,54 +1,69 @@
 <html>
 <head>
 <style>
+body{
+  background-color: grey
+}
 line {
-  visibility: hidden;
+  /*visibility: hidden;*/
 }
 </style>
 </head>
 <body>
-  <svg version="1.1" id="my-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-  	  viewBox="0 0 600 600" style="enable-background:new 0 0 600 600;" xml:space="preserve">
-  <rect x="-5" style="fill:#5000F6;" width="600" height="600"/>
-    <g id="lines" style="fill:none;stroke:#fff;stroke-width:6;stroke-miterlimit:10;">
-      <line x1="285.813" y1="277.825" x2="269.359" y2="238.1"/>
-      <line x1="304.186" y1="277.825" x2="320.521" y2="238.389"/>
-      <line x1="317.176" y1="290.814" x2="356.9" y2="274.359"/>
-      <line x1="317.18" y1="309.188" x2="356.612" y2="325.521"/>
-      <line x1="304.18" y1="322.178" x2="320.64" y2="361.9"/>
-      <line x1="285.813" y1="322.178" x2="269.479" y2="361.612"/>
-      <line x1="272.825" y1="309.188" x2="233.1" y2="325.64"/>
-      <line x1="272.825" y1="290.814" x2="233.389" y2="274.479"/>
+  <svg version="1.1" id="my-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 600 600" style="enable-background:new 0 0 600 600;" xml:space="preserve">
+      <defs>
+          <filter id="goo" height="300%" y="-100%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 17 -7"/>
 
-  </g>
-  <g>
-  	<defs>
-  		<rect id="SVGID_1_" x="-5" width="600" height="600"/>
-  	</defs>
-  	<clipPath id="SVGID_2_">
-  		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
-  	</clipPath>
-  	<path style="clip-path:url(#SVGID_2_);fill:#fff;" d="M308,300c0,7.18-5.82,13-13,13s-13-5.82-13-13s5.82-13,13-13
-  		S308,292.82,308,300"/>
+          </filter>
 
-  		<circle style="clip-path:url(#SVGID_2_);fill:none;stroke:#fff;stroke-width:4;stroke-miterlimit:10;" cx="295" cy="300" r="24"/>
-  </g>
-  </svg>
-  <script src="js/jquery.min.js"></script>
+      </defs>
+
+
+      <g class="radioGroup" filter="url(#goo)">
+        <g id="lines" style="fill:none;stroke:#fff;stroke-width:6;stroke-miterlimit:10;">
+          <line x1="285.813" y1="277.825" x2="269.359" y2="238.1"/>
+          <line x1="304.186" y1="277.825" x2="320.521" y2="238.389"/>
+          <line x1="317.176" y1="290.814" x2="356.9" y2="274.359"/>
+          <line x1="317.18" y1="309.188" x2="356.612" y2="325.521"/>
+          <line x1="304.18" y1="322.178" x2="320.64" y2="361.9"/>
+          <line x1="285.813" y1="322.178" x2="269.479" y2="361.612"/>
+          <line x1="272.825" y1="309.188" x2="233.1" y2="325.64"/>
+          <line x1="272.825" y1="290.814" x2="233.389" y2="274.479"/>
+
+        </g>
+        <g>
+        	<defs>
+        		<rect id="SVGID_1_" x="-5" width="600" height="600"/>
+        	</defs>
+        	<clipPath id="SVGID_2_">
+        		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+        	</clipPath>
+        	<path id="ring" style="clip-path:url(#SVGID_2_);fill:#fff;" d="M308,300c0,7.18-5.82,13-13,13s-13-5.82-13-13s5.82-13,13-13
+        		S308,292.82,308,300"/>
+
+        		<circle style="clip-path:url(#SVGID_2_);fill:none;stroke:#fff;stroke-width:4;stroke-miterlimit:10;" cx="295" cy="300" r="24"/>
+        </g>
+      </g>
+    </svg>
+
+<script src="js/jquery.min.js"></script>
 <script src="js/tweenmax.min.js"></script>
 <script>
 
 (function(){
-  TweenMax.set("#lines",
+  TweenMax.set("#lines line",
 {
   attr:{
     stroke: "red"
   }
 })
-//store original attributes of elemen in a constant variable
-//elem:{x, x2}
+//store elements along with its original values in elements object
 var elements = {};
 var elemId = 0;
+//map elements to object
+//TODO: SVG Attribute Mapper
 $("#lines line").each(function(){
 
   $(this).attr("data-identity", "elem"+elemId)
@@ -63,6 +78,7 @@ $("#lines line").each(function(){
   elemId ++;
 });
 
+//set svg to begin to nothing
 $("#lines line").each(function(){
 console.log(elements[$(this).attr("data-identity")][0].x1);
   TweenMax.set($(this),{
@@ -73,33 +89,45 @@ console.log(elements[$(this).attr("data-identity")][0].x1);
     }
   })
 })
-$("#lines line").css("visibility","visible")
-  var tl = new TimelineMax({repeat: -1, repeatDelay:1});
-tl.from("#lines line", 1,{
-  onStart: vivusDraw
-})
 
-function vivusDraw(){
-  console.log('test')
+//$("#lines line").css("visibility","visible")
+var tl = new TimelineMax({repeat: -1, repeatDelay:1});
+// tl.from("#lines line", 1,{
+//   onStart: vivusDraw,
+//   ease: Linear.easeNone
+// })
+//
+// function vivusDraw(){
+//   console.log('test')
   $("#lines line").each(function(){
     var ox2 = elements[$(this).attr("data-identity")][0].x2;
     var oy2 = elements[$(this).attr("data-identity")][0].y2;
-
     tl.to($(this), 0.5,{
       attr:{
-        x2: ox2,
+        x2:ox2,
         y2: oy2
       }
-    }, 0)
+    },0)
     .to($(this), 0.5,{
       attr: {
-        x1 : ox2,
+        x1: ox2,
         y1: oy2
       }
-    }, "-=0.8")
+    }, 0.25)
 
   })
-}
+
+  tl.to("#ring", 0.5, {
+
+    
+
+  },0)
+//}
+
+
+
+
+
 }())
 
 
